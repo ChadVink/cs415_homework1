@@ -3,6 +3,7 @@ from add_mult import *
 
 debug = True
 test_option = "1"
+input_string = "5,43,31,34"
 
 def main():
     if(debug):
@@ -19,7 +20,7 @@ def main():
     ui = getInput() # User Input
 
     if user_option == "1": #Problem3a
-        print("Problem3a:")
+        print("Problem3a: " + str(pow(ui[0], ui[1])-pow(ui[2], ui[3])))
         solution = Problem3a(ui[0], ui[1], ui[2], ui[3])
         print(solution)
 
@@ -38,8 +39,15 @@ def main():
 
 def Problem3a(a, b, c, d):
     # Outputs A^B-C^D
-    return bin2dec(subtract(power(dec2bin(a),dec2bin(b)), power(dec2bin(c),dec2bin(d)))) # likely faster
+    ab = power(dec2bin(a),dec2bin(b))
+    cd = power(dec2bin(c),dec2bin(d))
+    solution, isNegitive = subtract(ab, cd)
+    if isNegitive: # if c^d > a^b
+        return bin2dec(solution) * -1
+    else:
+        return bin2dec(solution) # likely faster
     # return Subtract(Power(a,b),Power(c,d)) # More readable
+
 def Problem3b(a, b, c, d):
     #  quotient and the remainder when A^B is divided by C^D
     return a, b
@@ -57,31 +65,25 @@ def power(a, x):
     r = mult(r,b)
     return r
 
-# def Power(a, x):
-#     # a, x are ints
-#     # Power of a^x
-#     r = 1
-#     b = a # multiplier
-#     x = dec2bin(x)
-#     while len(x) > 1:
-#         if not even(x):
-#             r = r*b
-#         x = div2(x)
-#         b = b*b
-#     r = r*b
-#     return r
-
 def Power(a, x):
     # a, x are ints
     # Power of a^x
     return bin2dec(power(dec2bin(a), dec2bin(x)))
 
 def subtract(a, b):
-    # subtracts two arrays of binary numbers
+    # subtracts two binary arrays
     # with LSB stored in index 0
-    c = add(a, addOne(twosCompliment(b)))
-    c.pop() # Remove the overflow bit
-    return c
+    # return the binary array and a negitive flag
+    numBits = len(b)
+    c = add(a, twosCompliment(b))
+    if len(c) > numBits: # c is positive
+        c = addOne(c)
+        isNegitive = False
+        c.pop() # Remove the overflow bit
+    else: # c is negitve
+        c = twosCompliment(c)
+        isNegitive = True
+    return c, isNegitive
 
 def Subtract(a, b):
     # subtract two ints
@@ -96,8 +98,6 @@ def twosCompliment(a):
             a[i] = 1
         else:
             a[i] = 0
-    if debug:
-        print(a)
     return a
 
 def addOne(a):
@@ -115,7 +115,7 @@ def getInput():
     #Return the user input as an int list.
     if(debug):
         # If debug is turned on it will skip asking user for an input list and use a default list instead
-        user_input = "17,2,12,2"
+        user_input = input_string
         print("user_input is: " + user_input)
     else:
         user_input = raw_input("Please enter four integers seperated by commas: ")
@@ -132,6 +132,7 @@ def getInput():
         exit()
 
     return int_list
+
 
 if debug:
     main()
