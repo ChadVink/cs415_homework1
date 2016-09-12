@@ -1,9 +1,9 @@
 from add_mult import *
 #import conversions
 
-debug = True
+debug = False
 test_option = "1"
-input_string = "5,43,31,34"
+input_string = "5,8,14,3"
 
 def main():
     if(debug):
@@ -20,7 +20,10 @@ def main():
     ui = getInput() # User Input
 
     if user_option == "1": #Problem3a
-        print("Problem3a: " + str(pow(ui[0], ui[1])-pow(ui[2], ui[3])))
+        a = pow(ui[0], ui[1])
+        b = pow(ui[2], ui[3])
+        sol = a-b
+        print("Problem3a solution: " + str(a) + " - " + str(b) + " = " + str(sol) )
         solution = Problem3a(ui[0], ui[1], ui[2], ui[3])
         print(solution)
 
@@ -41,12 +44,17 @@ def Problem3a(a, b, c, d):
     # Outputs A^B-C^D
     ab = power(dec2bin(a),dec2bin(b))
     cd = power(dec2bin(c),dec2bin(d))
+
+    if debug:
+        m = ab[:]
+        n = cd[:]
+        print("Test: " + str(bin2dec(m)) + "-" + str(bin2dec(n)))
+
     solution, isNegitive = subtract(ab, cd)
     if isNegitive: # if c^d > a^b
         return bin2dec(solution) * -1
     else:
-        return bin2dec(solution) # likely faster
-    # return Subtract(Power(a,b),Power(c,d)) # More readable
+        return bin2dec(solution)
 
 def Problem3b(a, b, c, d):
     #  quotient and the remainder when A^B is divided by C^D
@@ -74,13 +82,17 @@ def subtract(a, b):
     # subtracts two binary arrays
     # with LSB stored in index 0
     # return the binary array and a negitive flag
-    numBits = len(b)
+    numBits = max(len(b), len(a)) # Length of largest number to check for overflow bit
+    if len(a) > len(b): # Make b the same length of a so 2's compliment works properly
+        for i in range(len(a)-len(b)):
+            b.append(0)
+
     c = add(a, twosCompliment(b))
-    if len(c) > numBits: # c is positive
+    if len(c) > numBits: # c has overflow bit so it is positive
         c = addOne(c)
         isNegitive = False
         c.pop() # Remove the overflow bit
-    else: # c is negitve
+    else: # c doesn't have overflow bit so it is negitve
         c = twosCompliment(c)
         isNegitive = True
     return c, isNegitive
