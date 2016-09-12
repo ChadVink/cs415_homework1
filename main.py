@@ -1,9 +1,10 @@
 from add_mult import *
 #import conversions
 
-debug = False
-test_option = "1"
-input_string = "5,8,14,3"
+debug = True
+showSolution = True
+test_option = "2"
+input_string = "40,5,14,3"
 
 def main():
     if(debug):
@@ -20,10 +21,11 @@ def main():
     ui = getInput() # User Input
 
     if user_option == "1": #Problem3a
-        a = pow(ui[0], ui[1])
-        b = pow(ui[2], ui[3])
-        sol = a-b
-        print("Problem3a solution: " + str(a) + " - " + str(b) + " = " + str(sol) )
+        if showSolution:
+            a = pow(ui[0], ui[1])
+            b = pow(ui[2], ui[3])
+            sol = a-b
+            print("Problem3a solution: " + str(a) + " - " + str(b) + " = " + str(sol) )
         solution = Problem3a(ui[0], ui[1], ui[2], ui[3])
         print(solution)
 
@@ -58,7 +60,8 @@ def Problem3a(a, b, c, d):
 
 def Problem3b(a, b, c, d):
     #  quotient and the remainder when A^B is divided by C^D
-    return a, b
+    q, r = divide(dec2bin(a),dec2bin(b))
+    return bin2dec(q), bin2dec(r)
 
 def power(a, x):
     # a, x are binary lists
@@ -103,6 +106,30 @@ def Subtract(a, b):
         print(str(a) + "-" + str(b))
     return bin2dec(subtract(dec2bin(a),dec2bin(b)))
 
+def divide(n, d):
+    # n(umerator)/d(enominator) in a binary array
+    #returns the quotient and remainder
+    if zero(d):
+        print("Cannot divide by 0.")
+        exit()
+    #q = []
+    #r = []
+    if zero(n):
+        return [0], [0]
+    q, r = divide(div2(n), d)
+    #print(q, r)
+    q.insert(0,0)
+    r.insert(0,0)
+    #print(q)
+    if not even(n):
+        r = addOne(r)
+    if isGreater(r, d):
+        r, flag = subtract(r,d)
+        q = addOne(q)
+    return (q, r)
+
+
+
 def twosCompliment(a):
     # Return negation of bit arrays
     for i in range(len(a)):
@@ -144,6 +171,20 @@ def getInput():
         exit()
 
     return int_list
+
+def isGreater (A, B): # is A greater than B
+    if len(A) > len(B):
+        return True
+    if len(A) < len(B):
+        return False
+    else:   # we know they are the same length
+        for i in range (len(A)-1, 0): # compare bit by bit
+            if A[i] != B[i]: # bits are not equal
+                if A[i] == 1: # most significant bit is higher than B
+                    return True
+                else:    # B is greater than A
+                    return False
+    return True    # they are equal
 
 
 if debug:
