@@ -1,10 +1,10 @@
 from add_mult import *
 #import conversions
 
-debug = True
-showSolution = True
+debug = False
+showSolution = False
 test_option = "2"
-input_string = "40,5,14,3"
+input_string = "5,9,9,4"
 
 def main():
     if(debug):
@@ -30,7 +30,12 @@ def main():
         print(solution)
 
     elif user_option == "2": #Problem3b
-        print("Problem3b:")
+        if showSolution:
+            a = pow(ui[0], ui[1])
+            b = pow(ui[2], ui[3])
+            quo = a/b
+            rem = a%b
+            print("Problem3b solution: " + str(a) + " / " + str(b) + " = " + str(quo) + "r" + str(rem) )
         (quotient, remainder) = Problem3b(ui[0], ui[1], ui[2], ui[3])
         print(quotient, remainder)
 
@@ -60,7 +65,12 @@ def Problem3a(a, b, c, d):
 
 def Problem3b(a, b, c, d):
     #  quotient and the remainder when A^B is divided by C^D
-    q, r = divide(dec2bin(a),dec2bin(b))
+    ab = power(dec2bin(a),dec2bin(b))
+    cd = power(dec2bin(c),dec2bin(d))
+
+    print(bin2dec(ab), bin2dec(cd))
+
+    q, r = divide(ab,cd)
     return bin2dec(q), bin2dec(r)
 
 def power(a, x):
@@ -112,21 +122,17 @@ def divide(n, d):
     if zero(d):
         print("Cannot divide by 0.")
         exit()
-    #q = []
-    #r = []
     if zero(n):
-        return [0], [0]
+        return [], []
     q, r = divide(div2(n), d)
-    #print(q, r)
-    q.insert(0,0)
-    r.insert(0,0)
-    #print(q)
+    q = shift(q,1)
+    r = shift(r,1)
     if not even(n):
         r = addOne(r)
     if isGreater(r, d):
         r, flag = subtract(r,d)
         q = addOne(q)
-    return (q, r)
+    return q, r
 
 
 
@@ -173,18 +179,40 @@ def getInput():
     return int_list
 
 def isGreater (A, B): # is A greater than B
-    if len(A) > len(B):
-        return True
-    if len(A) < len(B):
-        return False
-    else:   # we know they are the same length
-        for i in range (len(A)-1, 0): # compare bit by bit
-            if A[i] != B[i]: # bits are not equal
-                if A[i] == 1: # most significant bit is higher than B
-                    return True
-                else:    # B is greater than A
-                    return False
-    return True    # they are equal
+    A1 = A[:]
+    B1 = B[:]
+    n = len(A1)
+    m = len(B1)
+    if n < m:
+        for j in range(len(B1)-len(A1)):
+            A1.append(0)
+    else:
+        for j in range(len(A1)-len(B1)):
+            B1.append(0)
+    N = max(m, n)
+    # print("A1:", A1, "B1:", B1)
+    for i in range (N-1, 0, -1): # compare bit by bit
+        if A1[i] != B1[i]: # bits are not equal
+            if A1[i] == 1: # most significant bit is higher than B
+                # print("a > b")
+                return True
+            else:    # B is greater than A
+                # print("b > a")
+                return False
+    return True
+
+    # if len(A) > len(B):
+    #     return True
+    # if len(A) < len(B):
+    #     return False
+    # else:   # we know they are the same length
+    #     for i in range (len(A)-1, 0): # compare bit by bit
+    #         if A[i] != B[i]: # bits are not equal
+    #             if A[i] == 1: # most significant bit is higher than B
+    #                 return True
+    #             else:    # B is greater than A
+    #                 return False
+    # return True    # they are equal
 
 
 if debug:
